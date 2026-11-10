@@ -97,14 +97,14 @@ impl DelegSink for TauriSink {
 
     fn blocked(&self, d: &Delegation) {
         let reason = d.blocked_reason.clone().unwrap_or_default();
-        let title = format!("Delboni, {} parou", d.title);
+        let title = format!("Dev, {} parou", d.title);
         let id = self.record(d, EventKind::NeedsInput, Priority::High, &title, Some(reason.clone()));
         let speech = crate::toast::speech(SpeechKind::Alert, title.clone());
         notify_delegation(&self.app, &Toast { title, body: reason, priority: Priority::High, event_id: id, speech }, &d.id, false);
     }
 
     fn failed(&self, d: &Delegation, message: &str) {
-        let title = format!("Delboni, a etapa {} de {} falhou", d.current_step + 1, d.steps.len());
+        let title = format!("Dev, a etapa {} de {} falhou", d.current_step + 1, d.steps.len());
         let body: String = message.lines().next().unwrap_or("").chars().take(160).collect();
         let id = self.record(d, EventKind::Error, Priority::High, &title, Some(message.to_string()));
         let speech = crate::toast::speech(SpeechKind::Alert, title.clone());

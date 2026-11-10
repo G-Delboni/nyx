@@ -1,5 +1,5 @@
 // The short line Nyx "says" in the corner of the scene. Pure: same inputs, same output.
-// Tone (PERSONAGEM §2): dry, short, no exclamation, no emoji; "Delboni" only for error,
+// Tone (PERSONAGEM §2): dry, short, no exclamation, no emoji; the user is always "Dev"; direct address ("Dev, ...") only for error,
 // block and usage alert; "Dev" otherwise. Pass a stable `now` (e.g. the moment the panel
 // opened), because the opening prefix and the rare joke are seeded from it.
 import type { AgentSession, Delegation, Snapshot } from "../api/contract";
@@ -50,7 +50,7 @@ const newest = <T extends { updatedAt: string }>(list: T[]): T =>
 interface Item {
   /** Text without the opening prefix. For checkpoint, `withPrefix` joins with a comma. */
   text: string;
-  /** Serious items never use the friendly "Dev" prefix and may call the user Delboni. */
+  /** Serious items skip the friendly opening prefix and address the user directly ("Dev, ..."). */
   serious: boolean;
   joinWithComma?: boolean;
 }
@@ -68,7 +68,7 @@ function urgentItem(snap: Snapshot, delegations: Delegation[]): Item {
   const blocked = delegations.filter((d) => d.status === "blocked");
   if (blocked.length) {
     const name = ctxName(newest(blocked).contextId);
-    return { text: `Delboni, ${name ? cap(short(name)) : "a delegação"} travou numa permissão.`, serious: true };
+    return { text: `Dev, ${name ? cap(short(name)) : "a delegação"} travou numa permissão.`, serious: true };
   }
 
   const waiting = snap.agents.filter((a) => a.status === "waiting");
@@ -78,11 +78,11 @@ function urgentItem(snap: Snapshot, delegations: Delegation[]): Item {
 
   const errored = snap.agents.filter((a) => a.status === "error");
   if (errored.length) {
-    return { text: `Delboni, falhou em ${folderOf(newest(errored))}.`, serious: true };
+    return { text: `Dev, falhou em ${folderOf(newest(errored))}.`, serious: true };
   }
 
   const pct = snap.weekUsage.percent;
-  if (pct != null && pct >= 95) return { text: `Delboni, semana em ${Math.round(pct)}% do teto.`, serious: true };
+  if (pct != null && pct >= 95) return { text: `Dev, semana em ${Math.round(pct)}% do teto.`, serious: true };
   if (pct != null && pct >= 80) return { text: `Semana em ${Math.round(pct)}% do teto.`, serious: false };
 
   const running = snap.agents.filter((a) => a.status === "running").length;

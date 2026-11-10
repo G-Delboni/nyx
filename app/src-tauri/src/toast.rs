@@ -40,7 +40,7 @@ pub fn for_event(kind: EventKind, folder: Option<&str>, detail: Option<&str>) ->
             ("Aguardando você".to_string(), body.clone(), speech(SpeechKind::Alert, body))
         }
         EventKind::Error => {
-            let line = format!("Delboni, o Claude Code em {f} falhou.");
+            let line = format!("Dev, o Claude Code em {f} falhou.");
             let mut body = line.clone();
             if let Some(d) = detail.filter(|d| !d.is_empty()) {
                 body.push(' ');
@@ -67,7 +67,7 @@ pub fn for_long_task(folder: Option<&str>, minutes: i64) -> Toast {
 
 /// Toast de uso semanal perto do teto. Sem humor em alerta de uso (PERSONAGEM §2).
 pub fn for_usage(threshold: f64, percent: f64, cost: f64, ceiling: f64) -> Toast {
-    let who = if threshold >= 95.0 { "Delboni, semana" } else { "Semana" };
+    let who = if threshold >= 95.0 { "Dev, semana" } else { "Semana" };
     Toast {
         title: format!("Uso em {}%", threshold.round() as i64),
         body: format!(
@@ -151,14 +151,14 @@ mod tests {
         assert_eq!(all[1].body, "Dev, o Claude Code em projeto demo quer uma resposta sua.");
         assert!(all[2].body.ends_with("build quebrou"));
         assert_eq!(all[3].body, "Semana em 82% do teto estimado. US$ 41.20 de US$ 50.00.");
-        assert!(all[4].body.starts_with("Delboni"));
+        assert!(all[4].body.starts_with("Dev"));
         assert_eq!(all[5].body, "Tarefa longa finalizada em nyx. 14 min.");
         assert_eq!(all[5].priority, Priority::Medium);
         assert!(for_event(EventKind::ToolUse, None, None).is_none());
         // fala: frase curta, sem o detalhe cru do erro
         assert_eq!(all[0].speech, None);
         assert_eq!(all[1].speech.as_ref().unwrap().kind, SpeechKind::Alert);
-        assert_eq!(all[2].speech.as_ref().unwrap().text, "Delboni, o Claude Code em um projeto falhou.");
+        assert_eq!(all[2].speech.as_ref().unwrap().text, "Dev, o Claude Code em um projeto falhou.");
         assert_eq!(all[3].speech.as_ref().unwrap().text, "Semana em 82% do teto.");
         assert_eq!(all[3].speech.as_ref().unwrap().kind, SpeechKind::LongTask);
         assert_eq!(all[5].speech.as_ref().unwrap().text, "Tarefa longa finalizada em nyx. 14 minutos.");

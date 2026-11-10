@@ -51,7 +51,7 @@ O núcleo então:
 
 ## 4. Chat com a Nyx
 - Aba **Nyx** (ou painel deslizante, conforme o visual) com o histórico do contexto atual (`get_chat`) e uma caixa de texto. Sem a chave: o estado vazio explica como definir a `ANTHROPIC_API_KEY` (no tom da Nyx).
-- O núcleo monta o pedido ao Haiku com: o system prompt da personagem (PERSONAGEM §2: seca, curta, sem exclamação nem emoji; "Dev"/"Delboni"); um snapshot local compacto (agentes, uso da semana, delegações ativas, últimos eventos do contexto); as últimas 20 mensagens do histórico. Nada de transcripts nem código vão para a API.
+- O núcleo monta o pedido ao Haiku com: o system prompt da personagem (PERSONAGEM §2: seca, curta, sem exclamação nem emoji; "Dev"); um snapshot local compacto (agentes, uso da semana, delegações ativas, últimos eventos do contexto); as últimas 20 mensagens do histórico. Nada de transcripts nem código vão para a API.
 - **Ações**: tool use do Haiku com as ferramentas `propose_start_delegation`, `propose_approve_step`, `propose_adjust_step`, `propose_install_hooks`, `propose_create_context` e `open_panel`. A resposta vira `ChatAction` com `state: "proposed"`; **só roda com o clique** (`run_chat_action`), que chama o mesmo command da UI. Nada é executado direto pelo modelo.
 - Persistência: tabela `chat_messages` (migração v2/v3), por `context_id` (null = geral); "Limpar conversa" apaga as do contexto.
 - Custo: `costUsd` por resposta, somado em `AiStatus.weekCostUsd` e mostrado na aba Uso como a linha "Nyx (IA)".

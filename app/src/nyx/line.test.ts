@@ -33,17 +33,17 @@ describe("priority order", () => {
     const s = snap([agent({ status: "waiting" }), agent({ status: "error" })], 99);
     expect(nyxLine(s, [deleg("blocked"), deleg("checkpoint")], idle)).toBe("Etapa 2 de 4 concluída. Aprova?");
   });
-  it("blocked comes next, naming the context and calling Delboni", () => {
-    expect(nyxLine(snap([agent({ status: "waiting" })]), [deleg("blocked")], idle)).toBe("Delboni, Projeto demo travou numa permissão.");
+  it("blocked comes next, naming the context and addressing Dev", () => {
+    expect(nyxLine(snap([agent({ status: "waiting" })]), [deleg("blocked")], idle)).toBe("Dev, Projeto demo travou numa permissão.");
   });
   it("waiting session", () => {
     expect(nyxLine(snap([agent({ status: "waiting" }), agent({ status: "error" })]), [], idle)).toBe("Projeto demo quer uma resposta sua.");
   });
   it("error session", () => {
-    expect(nyxLine(snap([agent({ status: "error", folderName: null, cwd: "C:\\a\\loja-api" })], 99), [], idle)).toBe("Delboni, falhou em Loja-api.");
+    expect(nyxLine(snap([agent({ status: "error", folderName: null, cwd: "C:\\a\\loja-api" })], 99), [], idle)).toBe("Dev, falhou em Loja-api.");
   });
-  it("usage at 95% and above uses Delboni", () => {
-    expect(nyxLine(snap([agent({ status: "running" })], 96.2), [], idle)).toBe("Delboni, semana em 96% do teto.");
+  it("usage at 95% and above uses Dev", () => {
+    expect(nyxLine(snap([agent({ status: "running" })], 96.2), [], idle)).toBe("Dev, semana em 96% do teto.");
   });
   it("usage at 80% and above stays with Dev (no name)", () => {
     expect(nyxLine(snap([], 82), [], idle)).toBe("Semana em 82% do teto.");
@@ -76,13 +76,13 @@ describe("opening prefix", () => {
     expect(nyxLine(snap(), [deleg("checkpoint")], open())).toMatch(/^(De volta|Online), Dev\. Etapa 2 de 4 concluída, aprova\?$/);
   });
   it("serious items open without the friendly name", () => {
-    expect(nyxLine(snap([agent({ status: "error" })]), [], open())).toBe("De volta. Delboni, falhou em Projeto demo.");
-    expect(nyxLine(snap([], 97), [], open())).toBe("De volta. Delboni, semana em 97% do teto.");
+    expect(nyxLine(snap([agent({ status: "error" })]), [], open())).toBe("De volta. Dev, falhou em Projeto demo.");
+    expect(nyxLine(snap([], 97), [], open())).toBe("De volta. Dev, semana em 97% do teto.");
   });
 });
 
 describe("tone rules", () => {
-  it("Delboni only on error, block and alert", () => {
+  it("calm lines carry the friendly Dev prefix", () => {
     const calm = [
       nyxLine(snap([agent({ status: "waiting" })]), [], open()),
       nyxLine(snap(), [deleg("checkpoint")], open()),
@@ -90,7 +90,6 @@ describe("tone rules", () => {
       nyxLine(snap([agent({ status: "running" })]), [], open()),
       nyxLine(snap(), [], open()),
     ];
-    calm.forEach((l) => expect(l).not.toContain("Delboni"));
     expect(calm.every((l) => /Dev/.test(l))).toBe(true);
   });
   it("stays short, with at most 2 sentences, no exclamation or emoji", () => {

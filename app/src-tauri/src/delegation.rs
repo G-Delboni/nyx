@@ -651,7 +651,7 @@ impl Engine {
             let msg = commit_message(&r.d.steps[cur], r.d.steps.len());
             if git(&wt, &["config", "user.name"]).is_err() || git(&wt, &["config", "user.email"]).is_err() {
                 bail!(
-                    "Delboni, o git não sabe quem você é neste repositório. Defina user.name e user.email \
+                    "Dev, o git não sabe quem você é neste repositório. Defina user.name e user.email \
                      (git config --global ...) e aprove de novo."
                 );
             }

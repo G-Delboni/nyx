@@ -418,7 +418,6 @@ mod tests {
     #[test]
     fn names_and_acronyms() {
         assert_eq!(normalize("Dev terminou"), "Dév terminou.");
-        assert_eq!(normalize("Delboni terminou"), "Delboni terminou.");
         assert_eq!(normalize("a API e o CLI"), "a á pê i e o cê éle i.");
         assert_eq!(normalize("abriu o PR no MCP."), "abriu o pê érre no ême cê pê.");
     }
