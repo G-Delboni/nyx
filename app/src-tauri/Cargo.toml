@@ -1,0 +1,42 @@
+[package]
+name = "nyx"
+description = "Nyx — tray assistant that supervises AI agents"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+name = "nyx_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon", "image-png"] }
+tauri-plugin-opener = "2"
+tauri-plugin-notification = "2"
+tauri-plugin-autostart = "2"
+tauri-plugin-single-instance = "2"
+serde.workspace = true
+serde_json.workspace = true
+chrono.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+dirs.workspace = true
+nyx-claude.workspace = true
+nyx-ai.workspace = true
+nyx-voice.workspace = true
+rodio = { version = "0.20", default-features = false, features = ["symphonia-mp3", "symphonia-wav"] }
+rusqlite = { version = "0.37", features = ["bundled"] }
+notify = "8"
+axum = { version = "0.8", default-features = false, features = ["http1", "json", "tokio"] }
+tokio = { version = "1", features = ["rt-multi-thread", "net", "macros", "sync", "time"] }
+rand = "0.9"
+hex = "0.4"
+log = "0.4"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.59", features = ["Win32_Foundation", "Win32_System_JobObjects", "Win32_System_Threading", "Win32_Security"] }
+
+[dev-dependencies]
+tempfile = "3"

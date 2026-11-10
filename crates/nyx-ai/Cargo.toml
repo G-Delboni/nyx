@@ -1,0 +1,16 @@
+[package]
+name = "nyx-ai"
+description = "Anthropic Messages API client, prompts and tool schemas for Nyx (chat, step summaries, plans)"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+chrono.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+ureq = { version = "3", default-features = false, features = ["json", "rustls"] }
+
+[dev-dependencies]
+tempfile = "3"

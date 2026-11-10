@@ -1,0 +1,713 @@
+@import "tailwindcss";
+@import "@fontsource/rajdhani/500.css";
+@import "@fontsource/rajdhani/600.css";
+@import "@fontsource/rajdhani/700.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/600.css";
+
+/* Tokens (CLAUDE.md "Identidade visual"). Nothing outside this list is a colour. */
+@theme {
+  --color-bg: #0d0b12;
+  --color-surface: #1a1622;
+  --color-surface-2: #231d2e;
+  --color-primary: #8b5cf6;
+  --color-neon: #c084fc;
+  --color-text: #e8e4f0;
+  --color-muted: #8a8494;
+  --color-line: #2d2539;
+  --font-display: "Rajdhani", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+}
+
+::selection {
+  background: var(--color-primary);
+  color: var(--color-bg);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-neon);
+  outline-offset: 1px;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button,
+[role="tab"],
+.toggle {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: 0;
+  transition:
+    transform 120ms var(--ease-out),
+    background-color 150ms,
+    border-color 150ms,
+    color 150ms;
+}
+button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+button:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+/* Short hover/focus transitions only. */
+.t {
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    color 150ms;
+}
+
+/* Cut corner (top-left and bottom-right), the HUD signature of direction A/E. */
+.cut {
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+}
+
+/* 1px frame card: the outer colour is the border, the inner block is the surface. */
+.card {
+  padding: 1px;
+  background: var(--color-line);
+}
+.card > .card-body {
+  background: var(--color-surface);
+  padding: 9px 10px 8px;
+}
+.card.tone-running {
+  background: var(--color-primary);
+}
+.card.tone-waiting {
+  background: var(--color-neon);
+}
+.card.tone-waiting > .card-body {
+  background-color: var(--color-surface-2);
+  background-image: repeating-linear-gradient(135deg, rgba(192, 132, 252, 0.09) 0 2px, transparent 2px 10px);
+  background-size: 28px 100%;
+  background-repeat: no-repeat;
+}
+.card.tone-error {
+  background: linear-gradient(90deg, var(--color-neon), var(--color-primary));
+}
+.card.tone-idle > .card-body {
+  color: var(--color-muted);
+}
+.card.tone-neon {
+  background: var(--color-neon);
+}
+.card.tone-primary {
+  background: var(--color-primary);
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+.card.tone-waiting {
+  animation: pulse 2.6s ease-in-out infinite;
+}
+
+/* Segmented bar: 20 cells, 80/95 marks. */
+.seg {
+  display: grid;
+  grid-template-columns: repeat(20, 1fr);
+  gap: 2px;
+  height: 8px;
+}
+.seg > i {
+  display: block;
+  background: var(--color-line);
+}
+.seg > i.on {
+  background: var(--color-primary);
+}
+.seg > i.on.hot {
+  background: var(--color-neon);
+}
+.seg > i.mark {
+  background: transparent;
+  border: 1px dashed var(--color-muted);
+}
+
+/* Text cursor ▮ (neon). Blinks only when idle; the typing line stops it while typing. */
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+.cursor {
+  display: inline-block;
+  width: 6px;
+  height: 11px;
+  background: var(--color-neon);
+  vertical-align: -1px;
+  margin-left: 2px;
+  animation: blink 1s steps(1) infinite;
+}
+.typing .cursor {
+  animation: none;
+}
+
+/* ---------- Scene (direction E: portrait in penumbra) ---------- */
+.scene {
+  position: relative;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: #0a0810;
+  border-bottom: 1px solid var(--color-line);
+  aspect-ratio: 420 / 232;
+  container-type: inline-size;
+}
+/* The picture stack is designed at 420x232 and scaled to the panel width. */
+.scene-pic {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 420px;
+  height: 232px;
+  transform-origin: 0 0;
+}
+.scene-photo {
+  position: absolute;
+  inset: 0;
+  background: url(/scene/ref-03.webp) 15% 0% / 130% auto no-repeat;
+  filter: saturate(0.7) brightness(0.74) contrast(1.06);
+}
+.scene-rain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.16;
+  background:
+    repeating-linear-gradient(104deg, transparent 0 22px, rgba(232, 228, 240, 0.1) 22px 23px, transparent 23px 41px),
+    repeating-linear-gradient(104deg, transparent 0 13px, rgba(192, 132, 252, 0.07) 13px 14px, transparent 14px 29px);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.4));
+}
+.scene-led {
+  position: absolute;
+  left: 170px;
+  bottom: 30px;
+  width: 220px;
+  height: 130px;
+  background: radial-gradient(closest-side, rgba(192, 132, 252, 0.22), transparent);
+  mix-blend-mode: screen;
+}
+/* Glow of the violet parts only (headphone ring, L strips, pendant, irises): a pre-rendered mask, screen-blended. */
+.scene-glow {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  mix-blend-mode: screen;
+  opacity: 0.9;
+}
+/* ref-03 has the old cross earring; PERSONAGEM §4 says terminal-cursor pendant. */
+.scene-earfix {
+  position: absolute;
+  left: 308px;
+  top: 121px;
+  width: 14px;
+  height: 24px;
+  border-radius: 5px;
+  background: rgba(18, 14, 26, 0.92);
+  filter: blur(2px);
+}
+.scene-earcursor {
+  position: absolute;
+  left: 313px;
+  top: 128px;
+  width: 3px;
+  height: 7px;
+  background: var(--color-neon);
+  box-shadow: 0 0 4px var(--color-neon);
+  opacity: 0.85;
+}
+.scene-vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, transparent 70%, rgba(13, 11, 18, 0.85)),
+    radial-gradient(ellipse 250px 200px at 265px 95px, transparent 0, rgba(13, 11, 18, 0.12) 40%, rgba(13, 11, 18, 0.7) 78%, rgba(13, 11, 18, 0.96) 100%);
+}
+/* Same vignette in percentages (for the 3D canvas, which is not scaled from 420x232). */
+.scene-vignette.fluid {
+  background:
+    linear-gradient(to bottom, transparent 70%, rgba(13, 11, 18, 0.85)),
+    radial-gradient(ellipse 60% 86% at 66% 42%, transparent 0, rgba(13, 11, 18, 0.12) 40%, rgba(13, 11, 18, 0.7) 78%, rgba(13, 11, 18, 0.96) 100%);
+}
+.scene-frame {
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(139, 92, 246, 0.18);
+  pointer-events: none;
+}
+.scene-frame i {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--color-primary);
+}
+.scene-frame i:nth-child(1) { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+.scene-frame i:nth-child(2) { top: -1px; right: -1px; border-left: 0; border-bottom: 0; }
+.scene-frame i:nth-child(3) { bottom: -1px; left: -1px; border-right: 0; border-top: 0; }
+.scene-frame i:nth-child(4) { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+.scene-ruler {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 8px;
+  height: 6px;
+  background: repeating-linear-gradient(90deg, rgba(192, 132, 252, 0.35) 0 1px, transparent 1px 20px);
+  pointer-events: none;
+}
+.scene-ruler.v {
+  right: auto;
+  bottom: 8px;
+  width: 6px;
+  height: auto;
+  background: repeating-linear-gradient(0deg, rgba(192, 132, 252, 0.35) 0 1px, transparent 1px 20px);
+}
+/* Nyx's line: balanced wrap, readable over the photo. */
+.scene-say {
+  position: absolute;
+  left: 20px;
+  bottom: 56px;
+  margin: 0;
+  max-width: 236px;
+  text-wrap: balance;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--color-text);
+  text-shadow: 0 1px 2px rgba(13, 11, 18, 0.9);
+}
+.scene-say .cursor {
+  height: 10px;
+}
+.scene-say .t span.x {
+  color: var(--color-neon);
+}
+/* Speaking wave: five 2 px neon bars before the line, scaled from the baseline by the voice envelope (20 Hz, style writes
+   only). Enters in 200 ms, leaves in 300 ms once the audio ends. */
+.scene-wave {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 10px;
+  margin-right: 7px;
+  vertical-align: -1px;
+  opacity: 1;
+  animation: wave-in 200ms var(--ease-out);
+  transition: opacity 300ms cubic-bezier(0.3, 0, 1, 1);
+}
+.scene-wave.out {
+  opacity: 0;
+}
+.scene-wave i {
+  display: block;
+  width: 2px;
+  height: 10px;
+  background: var(--color-neon);
+  box-shadow: 0 0 4px rgba(192, 132, 252, 0.6);
+  transform-origin: 50% 100%;
+  transition: transform 70ms linear; /* bridges the 50 ms envelope steps without lag */
+}
+@keyframes wave-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+/* Quick mute: a 12 px speaker in the HUD's right column (muted colour, text on hover, neon focus ring). */
+.scene-mute {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 0;
+  /* 24x24 minimum hit target (WCAG 2.2 AA) around the 12 px icon; negative right margin keeps the icon aligned with the version text */
+  min-width: 24px;
+  min-height: 24px;
+  justify-content: flex-end;
+  padding: 6px;
+  margin-right: -6px;
+  color: var(--color-muted);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: color 150ms;
+}
+.scene-mute:hover {
+  color: var(--color-text);
+}
+.scene-mute[aria-pressed="true"] {
+  color: var(--color-neon);
+}
+.scene-mute svg {
+  width: 12px;
+  height: 12px;
+  display: block;
+}
+.counter {
+  padding: 1px;
+  background: var(--color-line);
+}
+.counter.hot {
+  background: var(--color-neon);
+}
+.counter > div {
+  background: var(--color-bg);
+  padding: 4px 10px 4px 8px;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.counter .n {
+  font: 700 18px/1 var(--font-display);
+  color: var(--color-text);
+}
+.counter.hot .n {
+  color: var(--color-neon);
+}
+.counter .l {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--color-muted);
+  text-transform: uppercase;
+}
+
+/* Soft violet pool behind the week bar/tabs (from E's .panel::before). */
+.panel-pool::before {
+  content: "";
+  position: absolute;
+  left: -80px;
+  top: 150px;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(139, 92, 246, 0.14), transparent);
+  pointer-events: none;
+}
+
+/* Tabs (Rajdhani, uppercase, neon underline). */
+.tabs button {
+  padding: 9px 2px 8px;
+  font: 600 11px/1 var(--font-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  min-width: 0;
+}
+.tabs button[aria-selected="true"] {
+  color: var(--color-neon);
+  border-bottom-color: var(--color-neon);
+  background: var(--color-bg);
+}
+.tabs button sup {
+  font: 500 10px var(--font-mono);
+  color: var(--color-neon);
+  margin-left: 3px;
+}
+@media (hover: hover) {
+  .tabs button:hover {
+    color: var(--color-text);
+  }
+}
+
+/* Buttons. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font: 600 10px/1 var(--font-display);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 6px 9px;
+  border: 1px solid var(--color-primary);
+  color: var(--color-text);
+  white-space: nowrap;
+}
+.btn.primary {
+  background: var(--color-neon);
+  border-color: var(--color-neon);
+  color: var(--color-bg);
+}
+.btn.ghost {
+  border-color: var(--color-line);
+  color: var(--color-muted);
+}
+.btn.danger {
+  border-color: var(--color-neon);
+  color: var(--color-neon);
+}
+.btn.sm {
+  padding: 4px 7px;
+}
+@media (hover: hover) {
+  .btn:hover:not(:disabled) {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-bg);
+  }
+  .btn.ghost:hover:not(:disabled) {
+    background: transparent;
+    border-color: var(--color-primary);
+    color: var(--color-text);
+  }
+  .btn.danger:hover:not(:disabled) {
+    background: var(--color-neon);
+    border-color: var(--color-neon);
+    color: var(--color-bg);
+  }
+}
+
+/* Fields. */
+.field {
+  width: 100%;
+  border: 1px solid var(--color-line);
+  background: var(--color-bg);
+  padding: 6px 8px;
+  color: var(--color-text);
+  transition: border-color 150ms;
+}
+.field::placeholder {
+  color: var(--color-muted);
+}
+.field:hover:not(:disabled) {
+  border-color: var(--color-primary);
+}
+.field:focus-visible {
+  outline-offset: 0;
+  border-color: var(--color-neon);
+}
+.field:read-only {
+  color: var(--color-muted);
+}
+select.field {
+  appearance: none;
+  padding-right: 24px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--color-muted) 50%), linear-gradient(135deg, var(--color-muted) 50%, transparent 50%);
+  background-position: calc(100% - 13px) 50%, calc(100% - 9px) 50%;
+  background-size: 4px 4px;
+  background-repeat: no-repeat;
+}
+input[type="time"].field::-webkit-calendar-picker-indicator {
+  filter: invert(0.6);
+}
+
+/* Toggle: a segmented switch, not an OS checkbox. */
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.toggle .track {
+  position: relative;
+  width: 28px;
+  height: 14px;
+  border: 1px solid var(--color-line);
+  background: var(--color-bg);
+  flex: none;
+  transition: border-color 150ms, background-color 150ms;
+}
+.toggle .track::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 8px;
+  height: 8px;
+  background: var(--color-muted);
+  transition: transform 160ms var(--ease-out), background-color 150ms;
+}
+.toggle[aria-checked="true"] .track {
+  border-color: var(--color-neon);
+  background: var(--color-surface-2);
+}
+.toggle[aria-checked="true"] .track::after {
+  transform: translateX(14px);
+  background: var(--color-neon);
+}
+
+/* Slider: segmented track (20 cells like .seg) filled in primary up to --k (0..1); the native range sits on top,
+   transparent, and only its thumb is drawn (8x14 neon square). Thumb travel = width - 8 px, so the fill ends under it. */
+.slider {
+  position: relative;
+  height: 14px;
+  --thumb: 8px;
+}
+.slider .track {
+  position: absolute;
+  inset: 3px 0;
+  background: repeating-linear-gradient(90deg, var(--color-line) 0 calc(5% - 2px), transparent calc(5% - 2px) 5%);
+}
+.slider .track .fill {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(90deg, var(--color-primary) 0 calc(5% - 2px), transparent calc(5% - 2px) 5%);
+  /* same full-width gradient, clipped at the thumb centre: the filled cells stay aligned with the grey ones */
+  clip-path: inset(0 calc(100% - (var(--k) * (100% - var(--thumb)) + var(--thumb) / 2)) 0 0);
+  transition: clip-path 120ms var(--ease-out);
+}
+.slider input[type="range"] {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 14px;
+  margin: 0;
+  background: transparent;
+  appearance: none;
+  cursor: pointer;
+}
+.slider input[type="range"]::-webkit-slider-runnable-track {
+  height: 14px;
+  background: transparent;
+}
+.slider input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: var(--thumb);
+  height: 14px;
+  background: var(--color-neon);
+  border: 0;
+  box-shadow: 0 0 6px rgba(192, 132, 252, 0.45);
+  transition: box-shadow 150ms;
+}
+.slider input[type="range"]:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 8px rgba(192, 132, 252, 0.8);
+}
+.slider input[type="range"]:focus-visible {
+  outline: none;
+}
+.slider input[type="range"]:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-neon);
+}
+.slider.is-disabled {
+  opacity: 0.45;
+}
+.slider.is-disabled input[type="range"] {
+  cursor: default;
+}
+
+/* Events list rows. */
+.evt {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 7px 8px;
+  border: 1px solid var(--color-line);
+  background: var(--color-bg);
+  color: var(--color-muted);
+}
+.evt.unread {
+  border-color: var(--color-primary);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+/* Model table (Usage). */
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+.tbl th {
+  text-align: left;
+  font-weight: 400;
+  color: var(--color-muted);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 2px 0 4px;
+}
+.tbl td {
+  padding: 4px 0;
+  border-top: 1px solid var(--color-line);
+}
+.tbl .r {
+  text-align: right;
+}
+.tbl .bar {
+  display: inline-block;
+  height: 4px;
+  background: var(--color-primary);
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+/* Chat bubbles. */
+.bubble {
+  max-width: 88%;
+  padding: 7px 9px;
+  font-size: 11px;
+  line-height: 1.45;
+}
+.bubble.user {
+  margin-left: auto;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-line);
+}
+.bubble.nyx {
+  background: var(--color-surface);
+  border-left: 2px solid var(--color-neon);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t,
+  .toggle .track,
+  .toggle .track::after,
+  button {
+    transition: none;
+  }
+  .card.tone-waiting,
+  .cursor,
+  .scene-wave {
+    animation: none;
+  }
+  .scene-wave,
+  .scene-wave i,
+  .slider .track .fill {
+    transition: none;
+  }
+}

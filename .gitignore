@@ -1,0 +1,10 @@
+node_modules/
+target/
+dist/
+.env
+*.db
+*.log
+prototypes/**/models/*.vrm
+.claude/worktrees/
+app/src-tauri/gen/
+app/src-tauri/binaries/

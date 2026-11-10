@@ -1,0 +1,4 @@
+# VRM models stay out of git (10 MB+).
+# nyx.vrm = the real Nyx (VRoid export, VRM 1.0): used automatically when present.
+# sample.vrm = three-vrm sample, the stand-in: copy from prototypes/avatar-ascii/models/.
+*.vrm

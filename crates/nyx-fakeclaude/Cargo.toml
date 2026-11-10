@@ -1,0 +1,16 @@
+[package]
+name = "nyx-fakeclaude"
+description = "Test-only fake `claude` executable that replays stream-json fixtures"
+version.workspace = true
+edition.workspace = true
+publish = false
+
+[[bin]]
+name = "nyx-fakeclaude"
+path = "src/main.rs"
+
+[dependencies]
+serde_json.workspace = true
+
+[dev-dependencies]
+nyx-claude.workspace = true

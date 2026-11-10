@@ -1,0 +1,22 @@
+[package]
+name = "nyx-voice"
+description = "Nyx TTS: Azure Neural (REST + SSML), Windows fallback, text normalization, cache, mouth envelope"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+chrono.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+dirs.workspace = true
+ureq = { version = "3", default-features = false, features = ["rustls"] }
+sha2 = "0.10"
+hex = "0.4"
+
+[target.'cfg(windows)'.dependencies]
+windows = { version = "0.61", features = ["Foundation", "Foundation_Collections", "Media_SpeechSynthesis", "Media_Core", "Storage_Streams"] }
+
+[dev-dependencies]
+tempfile = "3"
